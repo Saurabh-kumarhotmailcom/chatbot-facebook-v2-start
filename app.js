@@ -36,6 +36,16 @@ if (!config.SERVER_URL) { //used for ink to static files
     throw new Error('missing SERVER_URL');
 }
 
+if (!config.SENGRID_API_KEY) { //sending email
+    throw new Error('missing SENGRID_API_KEY');
+}
+if (!config.EMAIL_FROM) { //sending email
+    throw new Error('missing EMAIL_FROM');
+}
+if (!config.EMAIL_TO) { //sending email
+    throw new Error('missing EMAIL_TO');
+}
+
 
 
 app.set('port', (process.env.PORT || 5000))
@@ -203,11 +213,17 @@ function handleEcho(messageId, appId, metadata) {
 }
 
 function handleDialogFlowAction(sender, action, messages, contexts, parameters) {
+    contexts.forEach(showDetails);
     switch (action) {
         default:
             //unhandled action, just send back the text
             handleMessages(messages, sender);
     }
+}
+
+
+function showDetails(currentValue, index){
+    console.log("context details: "+currentValue);
 }
 
 function handleMessage(message, sender) {
@@ -846,6 +862,29 @@ function verifyRequestSignature(req, res, buf) {
             throw new Error("Couldn't validate the request signature.");
         }
     }
+}
+
+
+function sendEmail(subject, content) {
+	console.log('sending email!');
+    const sgMail = require('@sendgrid/mail');
+    sgMail.setApiKey(config.SENGRID_API_KEY);
+    const msg = {
+        to: config.EMAIL_TO,
+        from: config.EMAIL_FROM,
+        subject: subject,
+        text: content,
+        html: content,
+    };
+    sgMail.send(msg)
+		.then(() => {
+        console.log('Email Sent!');
+    })
+	.catch(error => {
+		console.log('Email NOT Sent!');
+		console.error(error.toString());
+	});
+
 }
 
 function isDefined(obj) {
