@@ -78,7 +78,7 @@ const sessionIds = new Map();
 
 // Index route changing for github deployment
 app.get('/', function (req, res) {
-    res.send('Hello world, I am a chat bot using github')
+    res.send('Hello world, I am a chat bot updating node version')
 })
 
 // for Facebook verification
