@@ -826,7 +826,7 @@ function receivedAuthentication(event) {
  * callback in the x-hub-signature field, located in the header.
  *
  * https://developers.facebook.com/docs/graph-api/webhooks#setup
- *
+ * adding comment
  */
 function verifyRequestSignature(req, res, buf) {
     var signature = req.headers["x-hub-signature"];
