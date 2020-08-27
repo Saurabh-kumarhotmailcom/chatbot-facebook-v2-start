@@ -76,7 +76,7 @@ const sessionClient = new dialogflow.SessionsClient(
 
 const sessionIds = new Map();
 
-// Index route
+// Index route changing for github deployment
 app.get('/', function (req, res) {
     res.send('Hello world, I am a chat bot using github')
 })
