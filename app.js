@@ -237,9 +237,9 @@ function handleDialogFlowAction(sender, action, messages, contexts, parameters) 
                 let years_of_experience = (isDefined(contexts[0].parameters.fields['years-of-experience'])
                     && contexts[0].parameters.fields['years-of-experience'] != '') ? contexts[0].parameters.fields['years-of-experience'].stringValue : '';
                 let job_vacancy = (isDefined(contexts[0].parameters.fields['job-vacancy'])
-                    && contexts[0].parameters.fields['job-vacancy'] != '') ? contexts[0].parameters.fields['job-vacancy'].stringValue : '';
+                    && contexts[0].parameters.fields['job-entities'] != '') ? contexts[0].parameters.fields['job-entities'].stringValue : '';
                 if (phone_number != '' && user_name != '' && previous_job != '' && years_of_experience != ''
-                    && job_vacancy != '') {
+                    && job-entities != '') {
 
                     let emailContent = 'A new job enquiery from ' + user_name + ' for the job: ' + job_vacancy +
                         '.<br> Previous job position: ' + previous_job + '.' +
