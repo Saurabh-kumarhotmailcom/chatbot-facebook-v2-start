@@ -217,10 +217,16 @@ function handleDialogFlowAction(sender, action, messages, contexts, parameters) 
     switch (action) {
         case "Detailed-application":
             console.log("inside detailed appliction line 219 ");
+            contexts.forEach(function(item){
+                console.log(item);
+            })
+
             let filteredContexts = contexts.filter(function (el) {
                 return el.name.includes('job_application') ||
                     el.name.includes('job-application-details_dialog_context')
             });
+
+            console.log("inside detailed appliction line 229 ");
             if (filteredContexts.length > 0 && contexts[0].parameters) {
                 let phone_number = (isDefined(contexts[0].parameters.fields['phone-number'])
                     && contexts[0].parameters.fields['phone-number'] != '') ? contexts[0].parameters.fields['phone-number'].stringValue : '';
