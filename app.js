@@ -213,9 +213,10 @@ function handleEcho(messageId, appId, metadata) {
 }
 
 function handleDialogFlowAction(sender, action, messages, contexts, parameters) {
-    contexts.forEach(showDetails);
+    console.log("inside detailed appliction line 216 " + action);
     switch (action) {
         case "detailed-application":
+            console.log("inside detailed appliction line 219 ");
             let filteredContexts = contexts.filter(function (el) {
                 return el.name.includes('job_application') ||
                     el.name.includes('job-application-details_dialog_context')
