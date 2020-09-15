@@ -88,7 +88,7 @@ const sessionIds = new Map();
 
 // Index route changing for github deployment
 app.get('/', function (req, res) {
-    res.send('Hello world, Updated SENDGRID API Key.')
+    res.send('Hello world, Updated SENDGRID API Key. and Send Email')
 })
 
 // for Facebook verification
