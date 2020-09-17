@@ -215,6 +215,33 @@ function handleEcho(messageId, appId, metadata) {
 function handleDialogFlowAction(sender, action, messages, contexts, parameters) {
     console.log("inside detailed appliction line 216 " + action);
     switch (action) {
+        case "get-current-weather":
+            if ( parameters.fields.hasOwnProperty('geo-city') && parameters.fields['geo-city'].stringValue!='') {
+            	request({
+					url: 'http://api.openweathermap.org/data/2.5/weather', //URL to hit
+                	qs: {
+                		appid: config.WEATHER_API_KEY,
+						q: parameters.fields['geo-city'].stringValue
+                	}, //Query string data
+            	}, function(error, response, body){
+					if( response.statusCode === 200) {
+
+                    	let weather = JSON.parse(body);
+                    	if (weather.hasOwnProperty("weather")) {
+                        	let reply = `${messages[0].text.text} ${weather["weather"][0]["description"]}`;
+                        	sendTextMessage(sender, reply);
+                    	} else {
+                        	sendTextMessage(sender,
+								`No weather forecast available for ${parameters.fields['geo-city'].stringValue}`);
+                        }
+                    } else {
+						sendTextMessage(sender, 'Weather forecast is not available');
+                    }
+                });
+            } else {
+            	handleMessages(messages, sender);
+            }
+            break;
         case "faq-delivery":
 
             handleMessages(messages, sender);
