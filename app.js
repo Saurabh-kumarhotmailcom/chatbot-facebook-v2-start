@@ -224,6 +224,7 @@ function handleDialogFlowAction(sender, action, messages, contexts, parameters) 
 						q: parameters.fields['geo-city'].stringValue
                 	}, //Query string data
             	}, function(error, response, body){
+                    console.log(body);
 					if( response.statusCode === 200) {
 
                     	let weather = JSON.parse(body);
