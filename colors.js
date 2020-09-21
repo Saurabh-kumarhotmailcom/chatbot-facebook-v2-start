@@ -39,7 +39,7 @@ module.exports = {
             }
             client
                 .query(
-                    'SELECT color FROM public.user_color WHERE fb_id=$1',
+                    'SELECT color FROM public.users WHERE fb_id=$1',
                     [userId],
                     function(err, result) {
                         if (err) {
@@ -60,7 +60,7 @@ module.exports = {
                 return console.error('Error acquiring client', err.stack);
             }
 
-            let sql1 = `SELECT color FROM user_color WHERE fb_id='${userId}' LIMIT 1`;
+            let sql1 = `SELECT color FROM users WHERE fb_id='${userId}' LIMIT 1`;
             client
                 .query(sql1,
                     function(err, result) {
@@ -69,9 +69,9 @@ module.exports = {
                         } else {
                             let sql;
                             if (result.rows.length === 0) {
-                                sql = 'INSERT INTO public.user_color (color, fb_id) VALUES ($1, $2)';
+                                sql = 'INSERT INTO public.users (color, fb_id) VALUES ($1, $2)';
                             } else {
-                                sql = 'UPDATE public.user_color SET color=$1 WHERE fb_id=$2';
+                                sql = 'UPDATE public.users SET color=$1 WHERE fb_id=$2';
                             }
                             client.query(sql,
                             [
