@@ -12,6 +12,7 @@ const pg = require('pg');
 pg.defaults.ssl = true;
 
 const userService = require('./user');
+const colors = require('./colors');
 
 
 // Messenger API parameters
@@ -228,6 +229,13 @@ function handleEcho(messageId, appId, metadata) {
 function handleDialogFlowAction(sender, action, messages, contexts, parameters) {
     console.log("inside detailed appliction line 216 " + action);
     switch (action) {
+        case "iphone_colors":
+            colors.readAllColors(function (allColors) {
+                let allColorsString = allColors.join(', ');
+                let reply = `IPhone xxx is available in ${allColorsString}. What is your favourite color?`;
+                sendTextMessage(sender, reply);
+            });
+            break;
         case "get-current-weather":
             if ( parameters.fields.hasOwnProperty('geo-city') && parameters.fields['geo-city'].stringValue!='') {
             	request({
