@@ -227,7 +227,7 @@ function handleEcho(messageId, appId, metadata) {
 }
 
 function handleDialogFlowAction(sender, action, messages, contexts, parameters) {
-    console.log("inside detailed appliction line 216 " + action);
+    console.log("inside detailed appliction line 230 " + action);
     switch (action) {
         case "iphone_colors":
             colors.readAllColors(function (allColors) {

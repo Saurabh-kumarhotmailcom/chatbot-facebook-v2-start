@@ -10,6 +10,7 @@ module.exports = {
         var pool = new pg.Pool(config.PG_CONFIG);
         pool.connect(function(err, client, done) {
             if (err) {
+                console.log('Error line: 13'+err.stack);
                 return console.error('Error acquiring client', err.stack);
             }
             client
