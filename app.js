@@ -1024,7 +1024,13 @@ app.listen(app.get('port'), function () {
     console.log('running on port', app.get('port'))
 })
 
-
+async function resolveAfterXSeconds(x) {
+    return new Promise(resolve => {
+        setTimeout(() => {
+            resolve(x);
+        }, x * 1000);
+    });
+}
 
 async function greetUserText(userId) {
     if (!user) {
