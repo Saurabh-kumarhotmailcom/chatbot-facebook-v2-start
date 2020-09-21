@@ -14,7 +14,7 @@ module.exports = {
             }
             client
                 .query(
-                    'SELECT color FROM iphone_colors',
+                    `SELECT color FROM iphone_colors`,
                     function(err, result) {
                         if (err) {
                             console.log(err);
@@ -32,7 +32,6 @@ module.exports = {
         pool.end();
     },
 
-
     readUserColor: function(callback, userId) {
         var pool = new pg.Pool(config.PG_CONFIG);
         pool.connect(function(err, client, done) {
@@ -41,7 +40,7 @@ module.exports = {
             }
             client
                 .query(
-                    'SELECT color FROM public.user_color WHERE fb_id=$1',
+                    `SELECT color FROM public.user_color WHERE fb_id=$1`,
                     [userId],
                     function(err, result) {
                         if (err) {
