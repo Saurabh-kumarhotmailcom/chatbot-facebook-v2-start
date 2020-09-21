@@ -8,6 +8,8 @@ const bodyParser = require('body-parser');
 const request = require('request');
 const app = express();
 const uuid = require('uuid');
+const pg = require('pg');
+pg.defaults.ssl = true;
 
 
 // Messenger API parameters
@@ -45,7 +47,9 @@ if (!config.EMAIL_FROM) { //sending email
 if (!config.EMAIL_TO) { //sending email
     throw new Error('missing EMAIL_TO');
 }
-
+if (!config.PG_CONFIG) { //pg config
+    throw new Error('missing PG_CONFIG');
+}
 
 
 app.set('port', (process.env.PORT || 5000))
@@ -828,7 +832,11 @@ function receivedPostback(event) {
     // button for Structured Messages.
     var payload = event.postback.payload;
 
+    console.log("line 835:payload==>" + payload);
     switch (payload) {
+        case 'GET_STARTED':
+            greetUserText(senderID);
+            break;
         case 'CHAT':
             //user wants to chat
             sendTextMessage(senderID, "I love chatting too. Do you have any other questions for me?");
@@ -1006,3 +1014,63 @@ function isDefined(obj) {
 app.listen(app.get('port'), function () {
     console.log('running on port', app.get('port'))
 })
+
+
+
+function greetUserText(userId) {
+	//first read user firstname
+	request({
+		uri: 'https://graph.facebook.com/v3.2/' + userId,
+		qs: {
+			access_token: config.FB_PAGE_TOKEN
+		}
+
+	}, function (error, response, body) {
+		if (!error && response.statusCode == 200) {
+
+			var user = JSON.parse(body);
+			console.log('getUserData: ' + user);
+			if (user.first_name) {
+
+                var pool = new pg.Pool(config.PG_CONFIG);
+                pool.connect(function(err, client, done) {
+                    if (err) {
+                        return console.error('Error acquiring client', err.stack);
+                    }
+                    var rows = [];
+                    client.query(`SELECT fb_id FROM users WHERE fb_id='${userId}' LIMIT 1`,
+                        function(err, result) {
+                            if (err) {
+                                console.log('Query error: ' + err);
+                            } else {
+
+                                if (result.rows.length === 0) {
+                                    let sql = 'INSERT INTO users (fb_id, first_name, last_name, profile_pic) ' +
+										'VALUES ($1, $2, $3, $4)';
+                                    client.query(sql,
+                                        [
+                                            userId,
+                                            user.first_name,
+                                            user.last_name,
+                                            user.profile_pic
+                                        ]);
+                                }
+                            }
+                        });
+
+                });
+                pool.end();
+
+				sendTextMessage(userId, "Welcome " + user.first_name + '! ' +
+                    'I can answer frequently asked questions for you ' +
+                    'and I perform job interviews. What can I help you with?');
+			} else {
+				console.log("Cannot get data for fb user with id",
+					userId);
+			}
+		} else {
+			console.error(response.error);
+		}
+
+	});
+}
