@@ -9,12 +9,11 @@ module.exports = {
         var pool = new pg.Pool(config.PG_CONFIG);
         pool.connect(function(err, client, done) {
             if (err) {
-                console.log('Error line: 13'+err.stack);
                 return console.error('Error acquiring client', err.stack);
             }
             client
                 .query(
-                    `SELECT color FROM iphone_colors`,
+                    'SELECT color FROM public.iphone_colors',
                     function(err, result) {
                         if (err) {
                             console.log(err);
@@ -27,9 +26,10 @@ module.exports = {
                             callback(colors);
                         };
                     });
-            done();
         });
+        pool.end();
     },
+
 
     readUserColor: function(callback, userId) {
         var pool = new pg.Pool(config.PG_CONFIG);
@@ -39,7 +39,7 @@ module.exports = {
             }
             client
                 .query(
-                    `SELECT color FROM public.user_color WHERE fb_id=$1`,
+                    'SELECT color FROM public.user_color WHERE fb_id=$1',
                     [userId],
                     function(err, result) {
                         if (err) {
@@ -49,7 +49,6 @@ module.exports = {
                             callback(result.rows[0]['color']);
                         };
                     });
-            done();
         });
         pool.end();
     },
@@ -82,8 +81,6 @@ module.exports = {
                         }
                     }
                     );
-
-            done();
         });
         pool.end();
     }
