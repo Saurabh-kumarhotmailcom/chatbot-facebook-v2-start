@@ -11,6 +11,8 @@ const uuid = require('uuid');
 const pg = require('pg');
 pg.defaults.ssl = true;
 
+const userService = require('./user');
+
 
 // Messenger API parameters
 if (!config.FB_PAGE_TOKEN) {
@@ -89,6 +91,7 @@ const sessionClient = new dialogflow.SessionsClient(
 
 
 const sessionIds = new Map();
+const usersMap = new Map();
 
 // Index route changing for github deployment
 app.get('/', function (req, res) {
@@ -153,7 +156,17 @@ app.post('/webhook/', function (req, res) {
     }
 });
 
+function setSessionAndUser(senderID) {
+    if (!sessionIds.has(senderID)) {
+        sessionIds.set(senderID, uuid.v1());
+    }
 
+    if (!usersMap.has(senderID)) {
+        userService.addUser(function(user){
+            usersMap.set(senderID, user);
+        }, senderID);
+    }
+}
 
 
 
@@ -164,11 +177,7 @@ function receivedMessage(event) {
     var timeOfMessage = event.timestamp;
     var message = event.message;
 
-    if (!sessionIds.has(senderID)) {
-        sessionIds.set(senderID, uuid.v1());
-    }
-    //console.log("Received message for user %d and page %d at %d with message:", senderID, recipientID, timeOfMessage);
-    //console.log(JSON.stringify(message));
+    setSessionAndUser(senderID);
 
     var isEcho = message.is_echo;
     var messageId = message.mid;
@@ -832,7 +841,7 @@ function receivedPostback(event) {
     // button for Structured Messages.
     var payload = event.postback.payload;
 
-    console.log("line 835:payload==>" + payload);
+    console.log("line 844:payload==>" + payload);
     switch (payload) {
         case 'GET_STARTED':
             greetUserText(senderID);
@@ -1017,60 +1026,18 @@ app.listen(app.get('port'), function () {
 
 
 
-function greetUserText(userId) {
-	//first read user firstname
-	request({
-		uri: 'https://graph.facebook.com/v3.2/' + userId,
-		qs: {
-			access_token: config.FB_PAGE_TOKEN
-		}
-
-	}, function (error, response, body) {
-		if (!error && response.statusCode == 200) {
-
-			var user = JSON.parse(body);
-			console.log('getUserData: ' + user);
-			if (user.first_name) {
-
-                var pool = new pg.Pool(config.PG_CONFIG);
-                pool.connect(function(err, client, done) {
-                    if (err) {
-                        return console.error('Error acquiring client', err.stack);
-                    }
-                    var rows = [];
-                    client.query(`SELECT fb_id FROM users WHERE fb_id='${userId}' LIMIT 1`,
-                        function(err, result) {
-                            if (err) {
-                                console.log('Query error: ' + err);
-                            } else {
-
-                                if (result.rows.length === 0) {
-                                    let sql = 'INSERT INTO users (fb_id, first_name, last_name, profile_pic) ' +
-										'VALUES ($1, $2, $3, $4)';
-                                    client.query(sql,
-                                        [
-                                            userId,
-                                            user.first_name,
-                                            user.last_name,
-                                            user.profile_pic
-                                        ]);
-                                }
-                            }
-                        });
-
-                });
-                pool.end();
-
-				sendTextMessage(userId, "Welcome " + user.first_name + '! ' +
-                    'I can answer frequently asked questions for you ' +
-                    'and I perform job interviews. What can I help you with?');
-			} else {
-				console.log("Cannot get data for fb user with id",
-					userId);
-			}
-		} else {
-			console.error(response.error);
-		}
-
-	});
+async function greetUserText(userId) {
+    if (!user) {
+        await resolveAfterXSeconds(2);
+        user = usersMap.get(userId);
+    }
+    if (user) {
+        sendTextMessage(userId, "Welcome " + user.first_name + '! ' +
+            'I can answer frequently asked questions for you ' +
+            'and I perform job interviews. What can I help you with?');
+    } else {
+        sendTextMessage(userId, 'Welcome! ' +
+            'I can answer frequently asked questions for you ' +
+            'and I perform job interviews. What can I help you with?');
+    }
 }
