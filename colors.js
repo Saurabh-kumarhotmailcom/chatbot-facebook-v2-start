@@ -1,5 +1,4 @@
 'use strict';
-const request = require('request');
 const config = require('./config');
 const pg = require('pg');
 pg.defaults.ssl = true;
@@ -30,7 +29,6 @@ module.exports = {
                     });
             done();
         });
-        pool.end();
     },
 
     readUserColor: function(callback, userId) {
