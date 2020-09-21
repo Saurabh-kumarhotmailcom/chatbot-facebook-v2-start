@@ -1033,6 +1033,7 @@ async function resolveAfterXSeconds(x) {
 }
 
 async function greetUserText(userId) {
+    let user = usersMap.get(userId);
     if (!user) {
         await resolveAfterXSeconds(2);
         user = usersMap.get(userId);
