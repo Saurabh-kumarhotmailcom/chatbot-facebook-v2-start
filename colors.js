@@ -31,8 +31,10 @@ module.exports = {
     },
 
 
+   
     readUserColor: function(callback, userId) {
         var pool = new pg.Pool(config.PG_CONFIG);
+        console.log('Read USer COlor'+userId);
         pool.connect(function(err, client, done) {
             if (err) {
                 return console.error('Error acquiring client', err.stack);
@@ -49,6 +51,7 @@ module.exports = {
                             callback(result.rows[0]['color']);
                         };
                     });
+
         });
         pool.end();
     },
