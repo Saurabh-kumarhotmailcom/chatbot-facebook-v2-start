@@ -13,6 +13,7 @@ pg.defaults.ssl = true;
 
 const userService = require('./user');
 const colors = require('./colors');
+const { updateJobData } = require('./job');
 
 
 // Messenger API parameters
@@ -346,6 +347,7 @@ function handleDialogFlowAction(sender, action, messages, contexts, parameters) 
                         '.<br> Phone number: ' + phone_number + '.';
 
                     console.log('line'+emailContent);
+                    updateJobData.updateJobData(sender, user_name, job_vacancy, previous_job, years_of_experience, phone_number	);
                     sendEmail('New job application', emailContent);
 
                     handleMessages(messages, sender);
