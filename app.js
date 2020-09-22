@@ -229,6 +229,19 @@ function handleEcho(messageId, appId, metadata) {
 function handleDialogFlowAction(sender, action, messages, contexts, parameters) {
     console.log("inside detailed appliction line 230 " + action);
     switch (action) {
+        case "buy.iphone":
+            colors.readUserColor(function(color) {
+                    let reply;
+                    if (color === '') {
+                        reply = 'In what color would you like to have it?';
+                    } else {
+                        reply = `Would you like to order it in your favourite color ${color}?`;
+                    }
+                    sendTextMessage(sender, reply);
+
+                }, sender
+            )
+            break;
         case "iphone_colors.favourite":
             console.log("inside detailed appliction line 233 " + parameters.fields['color'].stringValue);
             colors.updateUserColor(parameters.fields['color'].stringValue, sender);
