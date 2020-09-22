@@ -4,7 +4,7 @@ const pg = require('pg');
 pg.defaults.ssl = true;
 
 module.exports = {
-    
+
     updateJobData: function(userId, user_name, job_vacancy, previous_job, years_of_experience, phone_number) {
         var pool = new pg.Pool(config.PG_CONFIG);
         pool.connect(function(err, client, done) {
@@ -12,7 +12,7 @@ module.exports = {
                 return console.error('Error acquiring client', err.stack);
             }
 
-            let sql1 = `SELECT color FROM job_data WHERE fb_id='${userId}' LIMIT 1`;
+            let sql1 = `SELECT * FROM job_data WHERE fb_id='${userId}' LIMIT 1`;
             client
                 .query(sql1,
                     function(err, result) {
