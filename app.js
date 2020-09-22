@@ -231,6 +231,7 @@ function handleDialogFlowAction(sender, action, messages, contexts, parameters) 
     switch (action) {
         case "buy.iphone":
             colors.readUserColor(function(color) {
+                console.log("line 234"+color);
                     let reply;
                     if (color === '') {
                         reply = 'In what color would you like to have it?';
