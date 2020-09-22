@@ -4,6 +4,7 @@ const pg = require('pg');
 pg.defaults.ssl = true;
 
 module.exports = {
+    
     updateJobData: function(userId, user_name, job_vacancy, previous_job, years_of_experience, phone_number) {
         var pool = new pg.Pool(config.PG_CONFIG);
         pool.connect(function(err, client, done) {
