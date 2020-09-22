@@ -229,7 +229,7 @@ function handleEcho(messageId, appId, metadata) {
 function handleDialogFlowAction(sender, action, messages, contexts, parameters) {
     console.log("inside detailed appliction line 230 " + action);
     switch (action) {
-        case "buy.iphone":
+        case "buy-iphone":
             colors.readUserColor(function(color) {
                 console.log("line 234"+color);
                     let reply;
